@@ -1,0 +1,10 @@
+name = "onlineMatching"
+version = "0.1.0"
+defaultTargets = ["OnlineMatching", "opt"]
+
+[[lean_lib]]
+name = "OnlineMatching"
+
+[[lean_exe]]
+name = "opt"
+root = "Main"

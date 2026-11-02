@@ -1,0 +1,7 @@
+greedy_filter
+cpp/solver
+lean/.lake/
+__pycache__/
+.venv/
+graphs/illustration/representatives.svg
+graphs/illustration/representatives.pdf
