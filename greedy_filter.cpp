@@ -46,6 +46,20 @@ int main(int argc, char** argv) {
     string line;
     while (cin >> line) {
         double value = greedy.ratio(line);
+        /*
+        GPT 6 Astra comment: For n <= 16, IEEE binary64 round-to-nearest
+        arithmetic (no fast-math) makes 1e-6 conservative. Each nonnegative
+        DP step sums at most 120 terms, divides, and adds 1; a dependency
+        path has at most 8 steps. Including division by the exact integer
+        OPT, the relative error is at most gamma_977 = 977*u/(1-977*u),
+        u = 2^-53. The true Greedy ratio is <= 1, so this also bounds its
+        absolute error (< 1.1e-13). For thresholds in [0,1], threshold
+        conversion and rounding of threshold + 1e-6 keep the total error
+        below 1e-12; 17-digit output round-trips the computed double.
+        Thus neither this test nor the same test in enumerate_graphs.py
+        can discard a graph whose true optimal ratio is below threshold,
+        since its true Greedy ratio is no larger than its optimal ratio.
+        */
         if (value <= threshold + 1e-6)
             cout << line << ' ' << value << endl;
     }
