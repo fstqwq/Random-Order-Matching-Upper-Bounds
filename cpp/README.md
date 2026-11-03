@@ -41,26 +41,26 @@ expected number of additional matched edges. With $r = m - |E(H)|$ remaining
 edges, the solver stores the integer
 
 $$
-F(H,U) = r!\,C(H)\,V(H,U).
+F(H,U) = r!\thinspace C(H)\thinspace V(H,U).
 $$
 
-Multiplying the recurrence by $r!\,C(H)$ cancels its denominators: each next
+Multiplying the recurrence by $r!\thinspace C(H)$ cancels its denominators: each next
 edge $e \notin E(H)$ with $C(H+e) > 0$ contributes
 
 $$
-\max\bigl\{F(H+e,U),\; (r-1)!\,C(H+e) + F(H+e,U \setminus e)\bigr\}
+\max\bigl\lbrace F(H+e,U),\quad  (r-1)!\thinspace C(H+e) + F(H+e,U \setminus e)\bigr\rbrace
 $$
 
 when $e \subseteq U$, and $F(H+e,U)$ otherwise. Since $C(\varnothing) = n!$
 and $V^\star(G) = V(\varnothing,[n])$, the ratio is
 
 $$
-\frac{V^\star(G)}{\mathrm{OPT}(G)} = \frac{F(\varnothing,[n])}{m!\,n!\,\mathrm{OPT}(G)}.
+\frac{V^\star(G)}{\mathrm{OPT}(G)} = \frac{F(\varnothing,[n])}{m!\thinspace n!\thinspace \mathrm{OPT}(G)}.
 $$
 
 States are stored up to relabeling. If $E(H)$ touches $k$ labels, these
 observed labels are renamed $0,\dots,k-1$ by nauty, and only
-$U \cap \{0,\dots,k-1\}$ is stored as a bitmask `available`. The other $n-k$
+$U \cap \lbrace 0,\dots,k-1\rbrace$ is stored as a bitmask `available`. The other $n-k$
 labels are unseen, so they are always in $U$ and interchangeable; in
 particular, $\lvert U\rvert = \lvert\texttt{available}\rvert + n - k$.
 Accordingly, the edges from an observed label to the unseen labels are grouped
@@ -100,7 +100,7 @@ representation and operations to the Lean specification.
   probabilities, has an expected matching size divided by $\mathrm{OPT}(G)$
   exceeding `referenceRatio n edges`.
 * `IntegerSolver.ratio_reference`: `solve oracle n edges m initial` divided by
-  $m!\,n!\,\mathrm{OPT}(G)$ equals `referenceRatio n edges`, for every
+  $m!\thinspace n!\thinspace \mathrm{OPT}(G)$ equals `referenceRatio n edges`, for every
   relabeling oracle.
 * `IntegerMemo.solve_correct`: the memoized version of the same recurrence
   returns the uncached value from every sound cache and leaves the cache
@@ -132,17 +132,17 @@ transition adds exactly one edge (`IntegerMemo.child_fuel`,
 | C++ | Lean | Correspondence |
 |---|---|---|
 | `count_fits` | `CountingEndToEnd.count_fits_eq_compatibleCount` | Depth-first search over injective maps of the observed vertices that send observed edges to host edges, with the degree filter, times $(n-k)!$ for the unseen labels. |
-| `upper == 0` returns 0 | `Solver.capacity`, `IntegerSolver.solve` | Both equal $\min\{m-\lvert E(H)\rvert,\ \lfloor\lvert U\rvert/2\rfloor\} = \min\{m-t,\ \lfloor(\lvert\texttt{available}\rvert + n - k)/2\rfloor\}$. |
+| `upper == 0` returns 0 | `Solver.capacity`, `IntegerSolver.solve` | Both equal $\min\lbrace m-\lvert E(H)\rvert,\ \lfloor\lvert U\rvert/2\rfloor\rbrace = \min\lbrace m-t,\ \lfloor(\lvert\texttt{available}\rvert + n - k)/2\rfloor\rbrace$. |
 | `enumerate_transitions` | `IntegerSolver.solve` | Edges between two observed vertices that are not yet observed (`remainingEdges (freshPairs k)`), with multiplicity $1$; edges $(u,k)$ with multiplicity $n-k$ when $k < n$; the edge $(k,k+1)$ with multiplicity $\binom{n-k}{2}$ when $k+1 < n$. |
 | child with `fits == 0` omitted | `IntegerSolver.term` | Lean includes the term with value 0. |
 | `canonical`, then `rename_mask` of `free` and of `free & ~ends` | `normalize`, `reveal`, `remove` | Both branches use the same old-to-new permutation. The permutation is checked to be a bijection and the relabeled graph is checked bit by bit (`CanonicalResult.correct`). |
-| `scale + accept`, `max`, `multiplicity * best` | `IntegerSolver.term` | `scale` $= (m-t-1)!\,C(H')$. |
+| `scale + accept`, `max`, `multiplicity * best` | `IntegerSolver.term` | `scale` $= (m-t-1)!\thinspace C(H')$. |
 | `solve` loop | `IntegerSolver.solve` | Sums the non-zero terms of `oldOld ++ oldNew ++ newNew`, rotated by a task-dependent offset (`sumNat_perm`). |
 | accept evaluated before or after reject | `IntegerSolver.term` | Both branches are evaluated before taking the maximum. |
 | shared table `lookup` / `publish` | `IntegerMemo.solve_correct`, `publish_solve` | Only completed values are inserted. A duplicate insertion must equal the stored value, otherwise the run aborts. |
 | thread-local `read_cache` | `IntegerMemo.two_level_hit`, `copy_hit` | Entries are copies of values from the shared table. A hit requires full-key equality; the tag is invalidated before copying and set only after the copy succeeds. |
 | `frontier`, workers, join, root `solve` | `IntegerMemo.warmup_root_correct`, `warmup_root_ratio` | Workers prewarm the shared table; the root call computes any remaining states. |
-| final division | `IntegerSolver.ratio_reference` | $F(\varnothing,[n]) / (m!\,n!\,\mathrm{OPT}(G))$. |
+| final division | `IntegerSolver.ratio_reference` | $F(\varnothing,[n]) / (m!\thinspace n!\thinspace \mathrm{OPT}(G))$. |
 
 ### Representation checks
 

@@ -4,17 +4,25 @@ Companion code for the upper bounds in *Improved Bounds for Online Matching with
 
 | Graph | $n$ | $m$ | Ratio |
 |---|---:|---:|---|
-| $G_{10}$ ([general](graphs/general/10.in)) | 10 | 19 | $2941136911678289/4223788208640000 < 0.696327$ |
-| $B_{2,3,3}$ ([bipartite](graphs/bipartite/16.in)) | 16 | 29 | $3970969041694879055111207/5638303485447723417600000 < 0.704285$ |
+| $G_{10}$ ([graphs/general/10.in](graphs/general/10.in)) | 10 | 19 | $2941136911678289/4223788208640000 < 0.696327$ |
+| $B_{2,3,3}$ ([graphs/bipartite/16.in](graphs/bipartite/16.in)) | 16 | 29 | $3970969041694879055111207/5638303485447723417600000 < 0.704285$ |
 
 Smaller worst-case graphs are listed in [graphs/general](graphs/general/README.md) and [graphs/bipartite](graphs/bipartite/README.md).
+
+<p align="center">
+  <img src="graphs/illustration/representatives.svg" alt="General-graph examples on 4, 6, 8, and 10 vertices, with their optimal online ratios.">
+</p>
+
+<p align="center">
+  <img src="graphs/illustration/bipartite.svg" alt="Bipartite constructions from the paper: optimal examples for 4, 6, 8, 10, and 12 vertices on the left, and the best-found 16-vertex construction on the right.">
+</p>
 
 ## The recurrence
 
 Let $H$ contain all arrived edges on the $n$ labels, including rejected edges, and let $U$ be the unmatched labels. Write $C(H)$ for the number of vertex bijections consistent with $H$. These bijections remain equally likely, so a possible next edge $e$ has probability
 
 $$
-p(e\mid H)=\frac{C(H+e)}{(m-|E(H)|)\,C(H)}.
+p(e\mid H)=\frac{C(H+e)}{(m-|E(H)|)\thinspace C(H)}.
 $$
 
 Let $V(H,U)$ be the maximum expected number of additional matched edges. Then
@@ -22,7 +30,7 @@ Let $V(H,U)$ be the maximum expected number of additional matched edges. Then
 $$
 V(H,U)=\sum_{\substack{e\notin E(H)\\ C(H+e)>0}} p(e\mid H)
 \begin{cases}
-\max\{V(H+e,U),\;1+V(H+e,U\setminus e)\}, & e\subseteq U,\\
+\max\lbrace V(H+e,U),\quad 1+V(H+e,U\setminus e)\rbrace, & e\subseteq U,\\
 V(H+e,U), & e\not\subseteq U,
 \end{cases}
 $$
@@ -48,6 +56,8 @@ g++ -O3 -std=c++17 greedy_filter.cpp -o greedy_filter
 ```
 
 The C++ solver additionally needs Boost and nauty built with thread-local storage; see [cpp/README.md](cpp/README.md). The Lean development needs only the toolchain in [lean/lean-toolchain](lean/lean-toolchain).
+
+To regenerate both figures, run `python3 graphs/illustration/draw.py` with `pdflatex` and `pdftocairo` on `PATH`. The standalone sources `main.tex` and `bipartite.tex` in `graphs/illustration/` reproduce the corresponding figures in the paper. The script produces `representatives.svg` and `bipartite.svg` for this README, plus a PDF of each figure.
 
 ## Usage
 
